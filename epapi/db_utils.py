@@ -12,25 +12,26 @@ def get_categories():
 
 
 def get_articles(query=None, category=None):
-    where = ''
+    where = 'WHERE id IS NOT null '
     params = []
     if query is not None and category is not None:
         params = ['%' + query.lower() + '%', category]
-        where += 'WHERE lower(title) LIKE %s AND collection = %s '
+        where += 'AND lower(title) LIKE %s AND collection = %s '
     elif query is not None:
         params = ['%' + query.lower() + '%']
-        where += 'WHERE lower(title) LIKE %s '
+        where += 'AND lower(title) LIKE %s '
     elif category is not None:
         params = [category]
-        where += 'WHERE collection = %s '
+        where += 'AND collection = %s '
 
     with connection.cursor() as cursor:
         cursor.execute('SELECT COUNT(*) FROM prod.articles ' + where, params)
         total = cursor.fetchone()[0]
     print(total)    
 
-    sql = 'SELECT id, title, collection, url, doi FROM prod.articles '
+    sql = 'SELECT id, title, collection, url, doi, id FROM prod.articles '
     sql += where
+    #sql += 'ORDER BY id DESC LIMIT 20'
     sql += 'LIMIT 20'
     print(sql)
     rows = []
