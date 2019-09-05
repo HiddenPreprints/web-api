@@ -5,14 +5,14 @@ def get_categories():
     rows = []
     with connection.cursor() as cursor:
         cursor.execute('SELECT collection, COUNT(*) '
-                       'FROM prod.articles '
+                       'FROM prod.enhanced '
                        'GROUP BY collection')
         rows = cursor.fetchall()
     return rows
 
 
 def get_articles(query=None, category=None):
-    where = 'WHERE id IS NOT null '
+    where = 'WHERE shadow_index IS NOT null '
     params = []
     if query is not None and category is not None:
         params = ['%' + query.lower() + '%', category]
@@ -25,14 +25,13 @@ def get_articles(query=None, category=None):
         where += 'AND collection = %s '
 
     with connection.cursor() as cursor:
-        cursor.execute('SELECT COUNT(*) FROM prod.articles ' + where, params)
+        cursor.execute('SELECT COUNT(*) FROM prod.enhanced ' + where, params)
         total = cursor.fetchone()[0]
     print(total)    
 
-    sql = 'SELECT id, title, collection, url, doi, id FROM prod.articles '
+    sql = 'SELECT id, title, collection, url, doi, shadow_index FROM prod.enhanced '
     sql += where
-    #sql += 'ORDER BY id DESC LIMIT 20'
-    sql += 'LIMIT 20'
+    sql += 'ORDER BY shadow_index DESC LIMIT 20'
     print(sql)
     rows = []
     with connection.cursor() as cursor:

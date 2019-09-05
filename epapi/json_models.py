@@ -24,7 +24,7 @@ class Article(object):
         self.category = data[2]
         self.url = data[3]
         self.doi = data[4]
-        self.shadow_index = round(100 - 10 * random.random(), 3)
+        self.shadow_index = round(data[5], 3)
         self.authors = data[6]
 
 
@@ -32,7 +32,6 @@ class Articles(object):
     def __init__(self, data):
         self.total = data[0]
         self.articles = [Article(a) for a in data[1]]
-        self.articles.sort(key=lambda c: c.shadow_index, reverse=True)
     
 
 class ArticleSerializer(serializers.Serializer):
