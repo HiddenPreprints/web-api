@@ -13,15 +13,19 @@ def get_categories():
 
 def get_articles(query=None, category=None):
     where = ''
+    params = []
     if query is not None and category is not None:
-        where += 'WHERE lower(title) LIKE \'%{}%\' AND collection = \'{}\' '.format(query.lower(), category)
+        params = ['%' + query.lower() + '%', category]
+        where += 'WHERE lower(title) LIKE %s AND collection = %s '
     elif query is not None:
-        where += 'WHERE lower(title) LIKE \'%{}%\' '.format(query.lower())
+        params = ['%' + query.lower() + '%']
+        where += 'WHERE lower(title) LIKE %s '
     elif category is not None:
-        where += 'WHERE collection = \'{}\' '.format(category)
+        params = [category]
+        where += 'WHERE collection = %s '
 
     with connection.cursor() as cursor:
-        cursor.execute('SELECT COUNT(*) FROM prod.articles ' + where)
+        cursor.execute('SELECT COUNT(*) FROM prod.articles ' + where, params)
         total = cursor.fetchone()[0]
     print(total)    
 
@@ -31,7 +35,7 @@ def get_articles(query=None, category=None):
     print(sql)
     rows = []
     with connection.cursor() as cursor:
-        cursor.execute(sql)
+        cursor.execute(sql, params)
         rows = cursor.fetchall()
     data = []
     for row in rows:

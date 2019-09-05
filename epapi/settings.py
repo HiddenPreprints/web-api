@@ -82,12 +82,9 @@ WSGI_APPLICATION = "epapi.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        #'NAME': 'equitable-preprints-db-main',
         'NAME': 'postgres',
         'USER': 'postgres',
-        #'PASSWORD': 'postgres',
         'PASSWORD': 'asdf',
-        #'HOST': 'equitable-preprints-db-main.cprzohlxt6om.eu-west-2.rds.amazonaws.com',
         'HOST': 'localhost',
         'PORT': '5432',
     }
