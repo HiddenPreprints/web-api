@@ -17,8 +17,9 @@ def get_articles(query=None, category=None, posted_since=None):
     where_clauses = ['shadow_index IS NOT null']
     params = []
     if query is not None:
-        where_clauses.append('lower(title) LIKE %s')
-        params.append('%' + query.lower() + '%')
+        where_clauses.append(
+            '(lower(title) LIKE %s OR lower(abstract) LIKE %s)')
+        params.extend(['%' + query.lower() + '%'] * 2)
     if category is not None:
         where_clauses.append('collection = %s')
         params.append(category)

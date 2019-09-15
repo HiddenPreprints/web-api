@@ -27,7 +27,7 @@ A category has the following fields: `key`, `name` and `total` (total number of 
 A list of articles. Accepts the following parameters:
 
   * `category`: category key
-  * `query`: search terms (against article title)
+  * `query`: search terms (against article title or abstract)
   * `posted_since`: filters the articles posted on or after given date (format: `yyyy-mm-dd`, e.g. `2019-05-01`)
 
 An article has the following fields: `id`, `title`, `category`, `url`, `doi`, `authors`, `shadow_index`.
