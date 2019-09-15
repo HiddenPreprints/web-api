@@ -2,15 +2,13 @@ from rest_framework import viewsets, routers
 from rest_framework.response import Response
 
 from .db_utils import get_categories, get_articles
-from .json_models import Category, CategorySerializer, \
-    Articles, ArticlesSerializer
+from .json_models import CategorySerializer, ArticlesSerializer
 
 
 class CategoryViewSet(viewsets.ViewSet):
 
     def list(self, request):
         categories = get_categories()
-        categories = [Category(c) for c in categories]
         categories.sort(key=lambda c: c.total, reverse=True)
 
         serializer = CategorySerializer(categories, many=True)
@@ -24,7 +22,6 @@ class ArticleViewSet(viewsets.ViewSet):
         query = params.get('query')
         category = params.get('category')
         articles = get_articles(query=query, category=category)
-        articles = Articles(articles)
 
         serializer = ArticlesSerializer(articles)
         return Response(serializer.data)

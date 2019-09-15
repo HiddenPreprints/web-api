@@ -1,14 +1,13 @@
-import random
 import re
 
 from rest_framework import serializers
 
 
 class Category(object):
-    def __init__(self, data):
-        self.key = data[0]
-        self.name = re.sub('-', ' ', str(data[0])).title()
-        self.total = data[1]
+    def __init__(self, key, total):
+        self.key = key
+        self.name = re.sub('-', ' ', str(key)).title()
+        self.total = total
 
 
 class CategorySerializer(serializers.Serializer):
@@ -18,21 +17,21 @@ class CategorySerializer(serializers.Serializer):
 
 
 class Article(object):
-    def __init__(self, data):
-        self.id = data[0]
-        self.title = data[1]
-        self.category = data[2]
-        self.url = data[3]
-        self.doi = data[4]
-        self.shadow_index = round(data[5], 3)
-        self.authors = data[6]
+    def __init__(self, id, title, category, url, doi, authors, shadow_index):
+        self.id = id
+        self.title = title
+        self.category = category
+        self.url = url
+        self.doi = doi
+        self.shadow_index = round(shadow_index, 3)
+        self.authors = authors
 
 
 class Articles(object):
-    def __init__(self, data):
-        self.total = data[0]
-        self.articles = [Article(a) for a in data[1]]
-    
+    def __init__(self, total, articles):
+        self.total = total
+        self.articles = articles
+
 
 class ArticleSerializer(serializers.Serializer):
     id = serializers.IntegerField()
