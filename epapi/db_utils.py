@@ -53,10 +53,12 @@ def get_articles(query=None, category=None, posted_since=None):
 def get_authors(article):
     rows = []
     with connection.cursor() as cursor:
-        cursor.execute('SELECT DISTINCT a.name '
+        cursor.execute('SELECT DISTINCT a.name, aa.id '
                        'FROM prod.authors AS a '
                        'INNER JOIN prod.article_authors AS aa '
                        'ON a.id=aa.author '
-                       'WHERE aa.article=\'{}\''.format(article))
+                       'WHERE aa.article=%s '
+                       'ORDER BY aa.id',
+                       [article])
         rows = cursor.fetchall()
     return ', '.join([r[0] for r in rows])
