@@ -17,14 +17,16 @@ class CategorySerializer(serializers.Serializer):
 
 
 class Article(object):
-    def __init__(self, id, title, category, url, doi, authors, shadow_index):
+    def __init__(self, id, title, category, url, doi, posted, authors,
+                 shadow_index):
         self.id = id
         self.title = title
+        self.authors = authors
+        self.posted = posted
         self.category = category
         self.url = url
         self.doi = doi
         self.shadow_index = round(shadow_index, 3)
-        self.authors = authors
 
 
 class Articles(object):
@@ -36,11 +38,12 @@ class Articles(object):
 class ArticleSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     title = serializers.CharField()
+    authors = serializers.CharField()
+    posted = serializers.DateField()
     category = serializers.CharField()
     url = serializers.CharField()
     doi = serializers.CharField()
     shadow_index = serializers.FloatField()
-    authors = serializers.CharField()
 
 
 class ArticlesSerializer(serializers.Serializer):

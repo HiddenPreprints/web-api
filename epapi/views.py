@@ -21,7 +21,9 @@ class ArticleViewSet(viewsets.ViewSet):
         params = request.GET.dict()
         query = params.get('query')
         category = params.get('category')
-        articles = get_articles(query=query, category=category)
+        posted_since = params.get('posted_since')
+        articles = get_articles(query=query, category=category,
+                                posted_since=posted_since)
 
         serializer = ArticlesSerializer(articles)
         return Response(serializer.data)
