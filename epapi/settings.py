@@ -21,13 +21,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "!^)x7f&ng*&8-3q7xrohpdgqr3^t@b%pbk7r$bnb%jub_9jht4"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ["0.0.0.0", "localhost"]
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -78,15 +74,15 @@ WSGI_APPLICATION = "epapi.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'asdf',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('MYSQL_DATABASE'),
+        'USER': os.environ.get('MYSQL_USER'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
+        'HOST': os.environ.get('MYSQL_HOST'),
+        'PORT': os.environ.get('MYSQL_PORT'),
+        'OPTIONS': {'charset': 'utf8mb4'},
     }
 }
 
@@ -114,8 +110,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = "/static/"
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# Export prometheus /metrics in an HTTPServer running in a daemon thread
-# NB- problem is this is that it doesn't work with autoload, so a PITA.
-# PROMETHEUS_METRICS_EXPORT_PORT_RANGE = range(8001, 8050)
+
+SOURCES = {
+    'biorxiv': {
+        'DATABASE': os.environ.get('BIORXIV_DATABASE'),
+        'USER': os.environ.get('BIORXIV_USER'),
+        'PASSWORD': os.environ.get('BIORXIV_PASSWORD'),
+        'HOST': os.environ.get('BIORXIV_HOST'),
+        'PORT': os.environ.get('BIORXIV_PORT'),
+    }
+}

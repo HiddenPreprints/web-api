@@ -6,9 +6,11 @@ from .json_models import Category, Article, Articles
 def get_categories():
     rows = []
     with connection.cursor() as cursor:
-        cursor.execute('SELECT collection, COUNT(*) '
-                       'FROM prod.enhanced '
-                       'GROUP BY collection')
+        cursor.execute('''
+            SELECT category, COUNT(*)
+            FROM articles
+            GROUP BY category
+        ''')
         rows = cursor.fetchall()
     return [Category(row[0], row[1]) for row in rows]
 
@@ -21,23 +23,22 @@ def get_articles(query=None, category=None, posted_since=None):
             '(lower(title) LIKE %s OR lower(abstract) LIKE %s)')
         params.extend(['%' + query.lower() + '%'] * 2)
     if category is not None:
-        where_clauses.append('collection = %s')
+        where_clauses.append('category = %s')
         params.append(category)
     if posted_since is not None:
-        where_clauses.append('posted >= %s')
+        where_clauses.append('posted_date >= %s')
         params.append(posted_since)
     where = 'WHERE ' + ' AND '.join(where_clauses)
 
     total = 0
     with connection.cursor() as cursor:
-        cursor.execute('SELECT COUNT(*) FROM prod.enhanced ' + where, params)
+        cursor.execute('SELECT COUNT(*) FROM articles ' + where, params)
         total = cursor.fetchone()[0]
 
-    sql = 'SELECT id, title, collection, url, doi, posted, shadow_index '
-    sql += 'FROM prod.enhanced '
+    sql = 'SELECT id, title, category, url, doi, posted_date, shadow_index '
+    sql += 'FROM articles '
     sql += where
     sql += ' ORDER BY shadow_index DESC LIMIT 20'
-    print(sql)
 
     rows = []
     with connection.cursor() as cursor:
@@ -53,12 +54,12 @@ def get_articles(query=None, category=None, posted_since=None):
 def get_authors(article):
     rows = []
     with connection.cursor() as cursor:
-        cursor.execute('SELECT DISTINCT a.name, aa.id '
-                       'FROM prod.authors AS a '
-                       'INNER JOIN prod.article_authors AS aa '
-                       'ON a.id=aa.author '
-                       'WHERE aa.article=%s '
-                       'ORDER BY aa.id',
-                       [article])
+        cursor.execute('''
+            SELECT DISTINCT a.name, aa.id
+            FROM authors AS a
+            INNER JOIN article_authors AS aa ON a.id=aa.author_id
+            WHERE aa.article_id=%s
+            ORDER BY aa.id
+        ''', [article])
         rows = cursor.fetchall()
     return ', '.join([r[0] for r in rows])
