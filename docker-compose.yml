@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+
+  db:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - 3306:3306
+    env_file:
+      - vars.env
+
+  api:
+    build: .
+    container_name: django-gunicorn
+    restart: always
+    env_file:
+      - vars.env
+    volumes:
+      - ./static:/code/static
+    ports:
+      - 8001:8001
+    working_dir: /code
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:1.17
+    container_name: ngx
+    ports:
+      - 8000:8000
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./static:/static
+    depends_on:
+      - api
