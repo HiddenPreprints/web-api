@@ -65,3 +65,29 @@ An article has the following fields: `id`, `title`, `category`, `url`, `doi`, `a
             ...
         ]
     }
+
+## Development
+
+To run the Equitable Preprints API, first make sure Docker is installed.
+
+Databases credentials are taken from `vars.env` file. It can be created by copying from `vars.env.example` and replacing question marks with appropriate values. `BIORXIV_*` variables should point to an existing database, from which the data will be imported. `SECRET_KEY` and `MYSQL_*` variables are related to the local Django and MySQL and should be set before the first deployment and not changed afterwards.
+
+To start all Docker services, in the project directory run:
+
+```
+docker-compose up -d
+```
+
+You may see errors resulting from the fact that the services start at the same time and not in the preferred order. Eventually, all services should start and connections between them should be established.
+
+The API's backend is MySQL database. Use these commands to create tables in the database, import bioRxiv data and calculate Shadow Index (all this will take several minutes):
+
+```
+docker-compose exec api python manage.py create_tables
+docker-compose exec api python manage.py import_biorxiv
+docker-compose exec api python manage.py calculate_shadow_index
+```
+
+The backend database stores all data in `<REPO DIR>/mysql_data` directory. As long as this directory is not deleted, restarting and rebuilding Docker containers does not affect the data in the database.
+
+The API can be accessed at `http://localhost:8000`.
