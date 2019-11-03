@@ -3,5 +3,6 @@
 .pyc
 __pycache__
 .mysql-data/
+mysql_data/
 static/
 vars.env
