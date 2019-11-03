@@ -33,7 +33,7 @@ class Command(BaseCommand):
         with connection.cursor() as cursor:
             cursor.execute('''
                 CREATE TEMPORARY TABLE s_i_tmp (
-                  id INT(11) NOT NULL,
+                  id VARCHAR(200) NOT NULL,
                   shadow_index FLOAT,
                   PRIMARY KEY (id)
             )''')
@@ -46,7 +46,7 @@ class Command(BaseCommand):
                     cursor.execute('''
                         INSERT INTO s_i_tmp
                         VALUES(%s, %s)
-                    ''', row)
+                    ''', ['biorxiv_' + str(row[0]), row[1]])
         finally:
             biorxiv_conn.close()
         self.stdout.write('Temporary Shadow Index table created...')
@@ -54,7 +54,7 @@ class Command(BaseCommand):
         with connection.cursor() as cursor:
             cursor.execute('''
                 UPDATE articles a
-                INNER JOIN s_i_tmp b ON a.source_id = b.id
+                INNER JOIN s_i_tmp b ON a.id = b.id
                 SET a.shadow_index = b.shadow_index
             ''')
         self.stdout.write('Shadow Index calculated')

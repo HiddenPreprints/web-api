@@ -10,9 +10,8 @@ class Command(BaseCommand):
         with connection.cursor() as cursor:
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS articles (
-                  id INT(11) AUTO_INCREMENT,
-                  source TEXT NOT NULL,
-                  source_id INT(11) NOT NULL,
+                  id VARCHAR(200) NOT NULL,
+                  source VARCHAR(200) NOT NULL,
                   doi TEXT,
                   url TEXT,
                   title TEXT NOT NULL,
@@ -24,13 +23,9 @@ class Command(BaseCommand):
                 ) CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci
             ''')
             cursor.execute('''
-                CREATE INDEX idx_articles_source_id ON articles(source_id)
-            ''')
-            cursor.execute('''
                 CREATE TABLE IF NOT EXISTS authors (
-                  id INT(11) AUTO_INCREMENT,
-                  source TEXT NOT NULL,
-                  source_id INT(11) NOT NULL,
+                  id VARCHAR(200) NOT NULL,
+                  source VARCHAR(200) NOT NULL,
                   name TEXT NOT NULL,
                   PRIMARY KEY (id)
                 ) CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci
@@ -38,11 +33,12 @@ class Command(BaseCommand):
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS article_authors (
                   id INT(11) AUTO_INCREMENT,
-                  article_id INT NOT NULL,
-                  author_id INT NOT NULL,
+                  article_id VARCHAR(200) NOT NULL,
+                  author_id VARCHAR(200) NOT NULL,
                   PRIMARY KEY (id),
                   FOREIGN KEY (article_id) REFERENCES articles(id),
-                  FOREIGN KEY (author_id) REFERENCES authors(id)
+                  FOREIGN KEY (author_id) REFERENCES authors(id),
+                  UNIQUE (article_id, author_id)
                 ) CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci
             ''')
         self.stdout.write('Tables created')

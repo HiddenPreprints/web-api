@@ -35,7 +35,8 @@ def get_articles(query=None, category=None, posted_since=None):
         cursor.execute('SELECT COUNT(*) FROM articles ' + where, params)
         total = cursor.fetchone()[0]
 
-    sql = 'SELECT id, title, category, url, doi, posted_date, shadow_index '
+    sql = 'SELECT id, source, title, category, url, doi, posted_date, ' + \
+        'shadow_index '
     sql += 'FROM articles '
     sql += where
     sql += ' ORDER BY shadow_index DESC LIMIT 20'
@@ -45,8 +46,8 @@ def get_articles(query=None, category=None, posted_since=None):
         cursor.execute(sql, params)
         rows = cursor.fetchall()
 
-    data = [Article(row[0], row[1], row[2], row[3], row[4], row[5],
-                    get_authors(row[0]), row[6])
+    data = [Article(row[0], row[1], row[2], row[3], row[4], row[5], row[6],
+                    get_authors(row[0]), row[7])
             for row in rows]
     return Articles(total, data)
 

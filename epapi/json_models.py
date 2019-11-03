@@ -17,9 +17,10 @@ class CategorySerializer(serializers.Serializer):
 
 
 class Article(object):
-    def __init__(self, id, title, category, url, doi, posted, authors,
+    def __init__(self, id, source, title, category, url, doi, posted, authors,
                  shadow_index):
         self.id = id
+        self.source = source
         self.title = title
         self.authors = authors
         self.posted = posted
@@ -36,7 +37,8 @@ class Articles(object):
 
 
 class ArticleSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+    id = serializers.CharField()
+    source = serializers.CharField()
     title = serializers.CharField()
     authors = serializers.CharField()
     posted = serializers.DateField()
