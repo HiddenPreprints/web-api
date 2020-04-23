@@ -1,12 +1,12 @@
 version: "3"
 
 services:
-
   db:
     image: mysql:5.7
+    container_name: hp-api-mysql
     restart: always
     volumes:
-      - ./mysql_data:/var/lib/mysql
+      - ../mysql_data:/var/lib/mysql
     ports:
       - 3306:3306
     env_file:
@@ -14,7 +14,7 @@ services:
 
   api:
     build: .
-    container_name: django-gunicorn
+    container_name: hp-api
     restart: always
     env_file:
       - vars.env
@@ -26,9 +26,20 @@ services:
     depends_on:
       - db
 
+  ui:
+    build: https://github.com/HiddenPreprints/web-ui.git
+    container_name: hp-ui
+    restart: always
+    environment:
+      - API_URL=http://nginx:8000
+    ports:
+      - 3000:3000
+    depends_on:
+      - api
+
   nginx:
     image: nginx:1.17
-    container_name: ngx
+    container_name: hp-api-nginx
     restart: always
     ports:
       - 8000:8000
